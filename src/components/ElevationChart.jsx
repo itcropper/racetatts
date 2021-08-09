@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+import {svg, scaleLinear, min, max, axisBottom, axisLeft, line, curveBasis } from 'd3';
 import React, { useEffect, useState, useRef } from 'react';
 
 export const ElevationChart = ({ elevationData, onChartLoad, aidStations, customs }) => {
@@ -16,8 +16,8 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
         setWidth(container.current.offsetWidth - margin.left - margin.right);
         setHeight(parseInt('' + (width * 0.3)) - margin.top - margin.bottom);
 
-        x = d3.scaleLinear().range([0, width]);
-        y = d3.scaleLinear().range([height, 0]);
+        x = scaleLinear().range([0, width]);
+        y = scaleLinear().range([height, 0]);
 
     });
 
@@ -84,14 +84,14 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
             container.current.innerHTML = '';
         }
 
-        svg = d3.select("#elevation-chart").append("svg")
+        svg = select("#elevation-chart").append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        xAxis = d3.axisBottom().scale(x).ticks(10);
-        yAxis = d3.axisLeft().scale(y).ticks(5);
+        xAxis = axisBottom().scale(x).ticks(10);
+        yAxis = axisLeft().scale(y).ticks(5);
 
         if (elevationData && elevationData.length) {
             drawChart()
@@ -105,7 +105,7 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
     }, [elevationData]);
 
     useEffect(() => {
-      d3.select('.elevation-path')
+      select('.elevation-path')
         .transition()
         .duration(1000)
         .style("stroke", customs.lineColor || 'blue')
@@ -120,10 +120,10 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
 
     function drawChart() {
 
-        x.domain([0, d3.max(elevationData, pt => pt.distance)]);
+        x.domain([0, max(elevationData, pt => pt.distance)]);
 
-        const minDomain = d3.min(elevationData, pt => pt.elevation);
-        const maxDomain = d3.max(elevationData, pt => pt.elevation)
+        const minDomain = min(elevationData, pt => pt.elevation);
+        const maxDomain = max(elevationData, pt => pt.elevation)
 
         y.domain([
             minDomain - minDomain * 0.05,
@@ -161,8 +161,8 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
                     "class": "horizontalGrid-lowest",
                     "x1": 0,
                     "x2": x(elevationData[elevationData.length - 1].index),
-                    "y1": y(d3.min(elevationData, pt => pt.elevation)),
-                    "y2": y(d3.min(elevationData, pt => pt.elevation)),
+                    "y1": y(min(elevationData, pt => pt.elevation)),
+                    "y2": y(min(elevationData, pt => pt.elevation)),
                     "fill": "none",
                     "shape-rendering": "crispEdges",
                     "stroke": "black",
@@ -172,8 +172,8 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
 
 
 
-        const plotLine = d3.line()
-            .curve(d3.curveBasis)
+        const plotLine = line()
+            .curve(curveBasis)
             .x(d => x(d.distance))
             .y(d => y(d.elevation));
 

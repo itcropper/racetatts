@@ -9,7 +9,7 @@ const AidStationRow = ({distance = 0, size = 0, color = "#000000", id, onUpdate}
 
     useEffect(() => {
         onUpdate({distance: dist, size: s, color: c, id});
-    }, [dist, s, c])
+    }, [dist, s, c, id, onUpdate])
 
     return (
         <div className="aid-station-row flex mb-4 items-center">
