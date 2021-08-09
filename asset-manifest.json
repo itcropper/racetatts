@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/racetatts/static/css/main.e85c7116.chunk.css",
+    "main.js": "/racetatts/static/js/main.ea78e99b.chunk.js",
+    "main.js.map": "/racetatts/static/js/main.ea78e99b.chunk.js.map",
+    "runtime-main.js": "/racetatts/static/js/runtime-main.a8435a8d.js",
+    "runtime-main.js.map": "/racetatts/static/js/runtime-main.a8435a8d.js.map",
+    "static/js/2.3e772e1f.chunk.js": "/racetatts/static/js/2.3e772e1f.chunk.js",
+    "static/js/2.3e772e1f.chunk.js.map": "/racetatts/static/js/2.3e772e1f.chunk.js.map",
+    "static/js/3.43c1d856.chunk.js": "/racetatts/static/js/3.43c1d856.chunk.js",
+    "static/js/3.43c1d856.chunk.js.map": "/racetatts/static/js/3.43c1d856.chunk.js.map",
+    "index.html": "/racetatts/index.html",
+    "static/css/main.e85c7116.chunk.css.map": "/racetatts/static/css/main.e85c7116.chunk.css.map",
+    "static/js/2.3e772e1f.chunk.js.LICENSE.txt": "/racetatts/static/js/2.3e772e1f.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.a8435a8d.js",
+    "static/js/2.3e772e1f.chunk.js",
+    "static/css/main.e85c7116.chunk.css",
+    "static/js/main.ea78e99b.chunk.js"
+  ]
+}
