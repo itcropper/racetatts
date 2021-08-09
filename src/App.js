@@ -24,16 +24,14 @@ function App() {
   
   const [chartIsLoaded, setChartIsLoaded] = useState(false);
 
-  useEffect(() => {
-    if(data){
-    }
-  }, [data])
+  // useEffect(() => {
+  //   if(data){
+  //   }
+  // }, [data])
 
-  useEffect(() => {
+  // useEffect(() => {
 
-
-
-  }, [customs.aidStations])
+  // }, [customs])
 
   return (
     <div className="App">

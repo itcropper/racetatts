@@ -31,16 +31,16 @@ export const CustomizePanel = ({onUpload, customs, setCustoms}) => {
     }, [title])
 
     useEffect(() => {
-        const lineWidth = {...state};
-        state.lineWidth = lineWidth;
-        setState({lineWidth})
-    }, [lineWidth])
+        setState({...state, lineColor});
+    }, [lineColor]);
 
     useEffect(() => {
-        const lineColor = {...state};
-        state.lineColor = lineColor;
-        setState({lineColor})
-    }, [lineColor]);
+        setState({...state, lineWidth});
+    }, [lineWidth]);
+
+    useEffect(() => {
+     setCustoms(state);  
+    }, [state]);
 
 
     useEffect(() => {

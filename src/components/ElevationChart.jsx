@@ -1,4 +1,4 @@
-import {svg, scaleLinear, min, max, axisBottom, axisLeft, line, curveBasis } from 'd3';
+import {svg, select, scaleLinear, min, max, axisBottom, axisLeft, line, curveBasis } from 'd3';
 import React, { useEffect, useState, useRef } from 'react';
 
 export const ElevationChart = ({ elevationData, onChartLoad, aidStations, customs }) => {
@@ -9,7 +9,7 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
     const [margin, setMargin] = useState({ top: 20, right: 50, bottom: 30, left: 50 });
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
-    const [line, setLine] = useState(null);
+    const [path, setPath] = useState(null);
     
 
     useEffect(() => {
@@ -113,10 +113,14 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
 
     }, [customs]);
 
-    useEffect(() => line && line.datum(elevationData)
+    useEffect(() =>{ 
+      //console.log('--------------- customs ---------------');
+      //console.dir(customs);
+      path && path.datum(elevationData)
       .style("fill", "none")
       .style("stroke", customs.lineColor || 'blue')
-      .style("stroke-width", `${customs.lineWidth || 3}px`), [line]);
+      .style("stroke-width", `${customs.lineWidth || 5}px`)
+    }, [path]);
 
     function drawChart() {
 
@@ -178,8 +182,8 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
             .y(d => y(d.elevation));
 
         
-        if(!line) {
-          setLine(svg.append("g").append("path")
+        if(!path) {
+          setPath(svg.append("g").append("path")
               .datum(elevationData)
               .attr("d", plotLine)
               .attr('class', 'elevation-path'));
