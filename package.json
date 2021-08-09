@@ -1,7 +1,8 @@
 {
   "name": "racestatts",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "homepage": "http://itcropper.github.io/racetatts",
   "dependencies": {
     "@mapbox/togeojson": "^0.16.0",
     "@testing-library/jest-dom": "^5.14.1",
