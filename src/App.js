@@ -24,15 +24,12 @@ function App() {
   
   const [chartIsLoaded, setChartIsLoaded] = useState(false);
 
-  useEffect(() => {
-    if(data){
-      // console.log(data);
-    }
-  }, [data])
-
   // useEffect(() => {
+  //   if(data && data.length > 1000){
+  //     setData(data.slice(0, 1000));
+  //   }
+  // }, [data])
 
-  // }, [customs])
 
   return (
     <div className="App">

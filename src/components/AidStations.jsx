@@ -9,13 +9,15 @@ const AidStationRow = ({distance = 0, size = 0, color = "#000000", id, onUpdate}
 
 
     useEffect(() => {
-        onUpdate({distance: dist, size: s, color: c, id});
+        if(JSON.stringify({distance: dist, size: s, color: c, id}) !== JSON.stringify({distance, size, color, id})){
+            onUpdate({distance: dist, size: s, color: c, id});
+        }
     }, [dist, s, c, id, onUpdate])
 
     return (
         <div className="aid-station-row mb-4 items-center flex flex-row ">
             <div className="flex flex-col">
-                <div class="flex flex-row">
+                <div className="flex flex-row">
                     <input
                         className="py-2 pl-4 w-6/12 mr-2 focus:border-light-blue-500 focus:ring-1 focus:ring-light-blue-500 focus:outline-none w-full text-sm text-black placeholder-gray-500 border border-gray-200 rounded-md"
                         type="number"
@@ -35,11 +37,13 @@ const AidStationRow = ({distance = 0, size = 0, color = "#000000", id, onUpdate}
                     colors={["#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5"]}
                     className="circle-picker w-full mr-2 flex justify-between h-20 items-center" 
                     value={c}
-                    onInput={e => setC(e.currentTarget.value)} />
+                    onChange={e => setC(e.hex)} />
             </div>
             <button className="w-1/12">X</button>
         </div>);
 }
+
+const objEq = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
 export const AidStations = ({updateStations}) => {
 
@@ -48,8 +52,8 @@ export const AidStations = ({updateStations}) => {
     const [stationList, setStationsList] = useState([_defaultStation]);
 
     useEffect(() => {
-        // updateStations(stationList);
-        //console.log(stationList);
+         updateStations(stationList);
+        // console.log(stationList);
     }, [JSON.stringify(stationList)]);
 
     const addStation = (e) => {
@@ -60,10 +64,16 @@ export const AidStations = ({updateStations}) => {
     const updateStation = (station) => {
         if(!station){return;}
         let st = stationList.find(s => s.id === station.id);
-        // console.log(st, station);
-        st = Object.assign({}, st, station);
-        const updatedStations = [...stationList.filter(s => s.id !== station.id)];
-        // setStationsList(updatedStations);
+        if(objEq(st, station)){
+            return;
+        }
+        let stIdx = stationList.findIndex(s => s.id ===station.id);
+        if(st){
+            const updatedStation = {...st, ...station};
+            stationList[stIdx] = updatedStation;
+            const updatedStationList = [...stationList];
+            setStationsList(updatedStationList);
+        }
     };
 
     return (

@@ -1,0 +1,4 @@
+.y.axis .tick line:first-child, 
+.y.axis .tick line:last-child{
+   opacity: 0;
+}

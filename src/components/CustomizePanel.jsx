@@ -5,7 +5,7 @@ import { AidStations } from './AidStations';
 
 
 
-export const CustomizePanel = ({onUpload, customs, setCustoms}) => {
+export const CustomizePanel = ({onUpload, customs, setCustoms, updateAidStations}) => {
 
     const [data, setData] = useState(null);
     const [title, setTitle] = useState("");
@@ -15,17 +15,13 @@ export const CustomizePanel = ({onUpload, customs, setCustoms}) => {
     const [showDistanceLines, setShowDistanceLines] = useState(true);
     const [state, setState] = useState(customs);
 
-    const [aidStations, setAidStations] = useState(customs.aidStations);
+    //const [aidStations, setAidStations] = useState(customs.aidStations);
 
     // useEffect(() => {
     //     console.log(aidStations);
     // }, [aidStations]);
 
-    useEffect(() => {
-
-        setData('null');
-
-    }, [data]);
+    // useEffect(() => setState({...state, aidStations}), [aidStations]);
 
     // useEffect(() => {
     //     setState({...state, lineColor, lineWidth, title, showElevationLines, showDistanceLines});
@@ -158,7 +154,7 @@ export const CustomizePanel = ({onUpload, customs, setCustoms}) => {
                     </div>
 
                     <div className="customize-field my-4">
-                        <AidStations aidStations={aidStations} updateStations={setAidStations} />
+                        <AidStations  updateStations={updateAidStations} />
                     </div> 
                 </div>
 

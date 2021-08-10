@@ -47,23 +47,6 @@ export const processData = (gpXml) => {
 
     parsedData.forEach((d,i,arr) => d.distance = d.segmentLength + (i === 0 ? 0 : arr[i-1].distance));
 
-    console.log(parsedData[parsedData.length - 1].distance);
-
-
-    // parsedData = parsedData.map((point, i, arr) => {
-    //   const distance = i === 0 ? 0 : arr[i].distance + arr[i-1].distance;
-    //   if(i % 9 === 0){
-    //     console.log("----distance");
-    //     console.log(distance);
-    //     debugger;
-    //   }
-      
-    //   return {
-    //     ...point,
-    //     distance
-    //   }
-    // });
-
     parsedData = parsedData.map((point, i, arr) => {
       const km = arr[i].distance;
       const miles = km * 0.621371;
