@@ -1,18 +1,21 @@
 import React, {useEffect, useState} from 'react';
 import {processData } from '../utilities/gpxparser'
-//import { AidStations } from './AidStations';
+import { CirclePicker  } from 'react-color';
+import { AidStations } from './AidStations';
 
 
 
 export const CustomizePanel = ({onUpload, customs, setCustoms}) => {
 
     const [data, setData] = useState(null);
-    const [title, setTitle] = useState("Crush It!");
+    const [title, setTitle] = useState("");
     const [lineWidth, setLineWidth] = useState(3);
-    const [lineColor, setLineColor] = useState('rgba(255,0,0,0.9)');
+    const [lineColor, setLineColor] = useState(customs.lineColor || '#9c27b0');
+    const [showElevationLines, setShowElevationLines] = useState(true);
+    const [showDistanceLines, setShowDistanceLines] = useState(true);
     const [state, setState] = useState(customs);
 
-    //const [aidStations, setAidStations] = useState(customs.aidStations);
+    const [aidStations, setAidStations] = useState(customs.aidStations);
 
     // useEffect(() => {
     //     console.log(aidStations);
@@ -24,28 +27,14 @@ export const CustomizePanel = ({onUpload, customs, setCustoms}) => {
 
     }, [data]);
 
-    useEffect(() => {
-        const title = {...state};
-        state.title = title;
-        setState({title})
-    }, [title])
-
-    useEffect(() => {
-        setState({...state, lineColor});
-    }, [lineColor]);
-
-    useEffect(() => {
-        setState({...state, lineWidth});
-    }, [lineWidth]);
-
-    useEffect(() => {
-     setCustoms(state);  
-    }, [state]);
-
+    // useEffect(() => {
+    //     setState({...state, lineColor, lineWidth, title, showElevationLines, showDistanceLines});
+    // }, [lineColor, lineWidth, title]);
 
     useEffect(() => {
         setCustoms(state);
     }, [state])
+
 
     // function processData(gpXml) {
 
@@ -93,17 +82,17 @@ export const CustomizePanel = ({onUpload, customs, setCustoms}) => {
                     className="focus:border-light-blue-500 focus:ring-1 focus:ring-light-blue-500 focus:outline-none w-full text-sm text-black placeholder-gray-500 border border-gray-200 rounded-md py-2 pl-4"
                     type="text"
                     placeholder="Crush It!"
-                    value={title}
-                    onChange={(e) => setTitle(e.currentTarget.value)}  />
+                    onKeyUp={e => setState({...state, title: e.currentTarget.value})} />
             </div>
 
             <div className="customize-field my-4">
                 <p className="text-xl  mb-2">Line Color</p>
-                <input type="color"
+                <CirclePicker onChange={ e => setState({ ...state, lineColor: e.hex }) }   />
+                {/* <input type="color"
                     name="line-color" 
                     className="w-4/12 ml-2 h-10" 
                     value={lineColor} 
-                    onChange={e => setLineColor(e.currentTarget.value)} />
+                    onChange={e => setState({...state, lineColor: e.currentTarget.value})} /> */}
             </div>
 
             <div className="customize-field my-4">
@@ -112,14 +101,13 @@ export const CustomizePanel = ({onUpload, customs, setCustoms}) => {
                     className="focus:border-light-blue-500 focus:ring-1 focus:ring-light-blue-500 focus:outline-none w-full text-sm text-black placeholder-gray-500 border border-gray-200 rounded-md py-2 pl-4"
                     type="number"
                     placeholder="3" 
-                    value={lineWidth}
-                    onChange={e => setLineWidth(e.currentTarget.value)} />
+                    onChange={e => setState({...state, lineWidth: e.currentTarget.value})} />
             </div>
 
 
             <div className="customize-field my-4 ">
                 <p className="text-xl mb-2">Show Elevation Axis</p>
-                <input type="checkbox" name="show-elevation-axis" value="yes" className="opacity-0 absolute h-8 w-8" checked onChange={() => {}} />
+                <input type="checkbox" name="show-elevation-axis" value="yes" className="opacity-0 absolute h-8 w-8" checked={state.showElevationLines} onChange={e =>setState({...state, showElevationLines: e.target.checked})} />
                 <div className="bg-white border-2 rounded-md border-blue-400 w-8 h-8 flex flex-shrink-0 justify-center items-center mr-2 focus-within:border-blue-500">
                     <svg className="fill-current hidden w-3 h-3 text-blue-600 pointer-events-none" version="1.1" viewBox="0 0 17 12"
                         xmlns="http://www.w3.org/2000/svg">
@@ -134,7 +122,7 @@ export const CustomizePanel = ({onUpload, customs, setCustoms}) => {
 
                 <div className="customize-field my-4 ">
                     <p className="text-xl mb-2">Show Distance Axis</p>
-                    <input type="checkbox" name="show-distance-axis" value="yes" className="opacity-0 absolute h-8 w-8" checked onChange={() => {}} />
+                    <input type="checkbox" name="show-distance-axis" value="yes" className="opacity-0 absolute h-8 w-8" checked={state.showDistanceLines} onChange={e =>setState({...state, showDistanceLines: e.target.checked})} />
                     <div
                         className="bg-white border-2 rounded-md border-blue-400 w-8 h-8 flex flex-shrink-0 justify-center items-center mr-2 focus-within:border-blue-500">
                         <svg className="fill-current hidden w-3 h-3 text-blue-600 pointer-events-none" version="1.1"
@@ -169,9 +157,9 @@ export const CustomizePanel = ({onUpload, customs, setCustoms}) => {
                         </div>
                     </div>
 
-                    {/* <div className="customize-field my-4">
+                    <div className="customize-field my-4">
                         <AidStations aidStations={aidStations} updateStations={setAidStations} />
-                    </div> */}
+                    </div> 
                 </div>
 
             </div>

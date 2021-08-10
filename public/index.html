@@ -272,94 +272,94 @@
     //     .style("stroke-width", Math.max(0, e.currentTarget.value) + "px");
     // });
 
-    const initInputs = () => {
+    // const initInputs = () => {
 
-      document.querySelector('[name="show-elevation-axis"]').addEventListener('change', e => {
-        document.querySelector('.y-axis').classList[e.currentTarget.checked ? 'remove' : 'add']('hidden');
-        document.querySelector('.horizontalGrid-lowest').classList[e.currentTarget.checked ? 'remove' : 'add']('hidden');
-        document.querySelector('.horizontalGrid-start').classList[e.currentTarget.checked ? 'remove' : 'add']('hidden');
-      })
+    //   document.querySelector('[name="show-elevation-axis"]').addEventListener('change', e => {
+    //     document.querySelector('.y-axis').classList[e.currentTarget.checked ? 'remove' : 'add']('hidden');
+    //     document.querySelector('.horizontalGrid-lowest').classList[e.currentTarget.checked ? 'remove' : 'add']('hidden');
+    //     document.querySelector('.horizontalGrid-start').classList[e.currentTarget.checked ? 'remove' : 'add']('hidden');
+    //   })
 
-      document.querySelector('[name="show-distance-axis"]').addEventListener('change', e => {
-        document.querySelector('.x-axis').classList[e.currentTarget.checked ? 'remove' : 'add']('hidden');
-      });
-    }
+    //   document.querySelector('[name="show-distance-axis"]').addEventListener('change', e => {
+    //     document.querySelector('.x-axis').classList[e.currentTarget.checked ? 'remove' : 'add']('hidden');
+    //   });
+    // }
 
-    setTimeout(() => {
+    // setTimeout(() => {
 
-      console.log('---------', document.querySelector('[name="gps-file"]'))
-      document.querySelector('[name="gps-file"]').addEventListener('change', initInputs);
+    //   console.log('---------', document.querySelector('[name="gps-file"]'))
+    //   document.querySelector('[name="gps-file"]').addEventListener('change', initInputs);
 
-    }, 2000)
+    // }, 2000)
 
-    console.log('..............',)
+    // console.log('..............',)
 
 
 
-    function addAidStationDot(e){
+    // function addAidStationDot(e){
 
-      const rowId = e.target.dataset['asid'];
-      const id = 'aid-station-' + (parseInt(rowId) + 1);
+    //   const rowId = e.target.dataset['asid'];
+    //   const id = 'aid-station-' + (parseInt(rowId) + 1);
 
-      if(!d3.select('#'+id).empty()){
-        if(e.target.name == 'aid-station-distance'){
-          const distance = parseFloat(e.target.value);
-          let i = 0;
-          let xPos = 0;
-          while(xPos <= distance && i < data.length){
-            xPos = data[i].distance;
-            i++;
-          }
+    //   if(!d3.select('#'+id).empty()){
+    //     if(e.target.name == 'aid-station-distance'){
+    //       const distance = parseFloat(e.target.value);
+    //       let i = 0;
+    //       let xPos = 0;
+    //       while(xPos <= distance && i < data.length){
+    //         xPos = data[i].distance;
+    //         i++;
+    //       }
           
-          d3.select('#'+id).attr({
-            cx: x(distance),
-          });
-          d3.select('#'+id).attr({
-            cy: y(data[i].elevation)
-          });
-        }else if(e.target.name == 'aid-station-size') {
-          const r = Math.max(parseFloat(e.target.value || '0'), 6)
-          d3.select('#'+id).attr({
-            r,
-            'stroke-width': r + "px"
-          });
-        }else if(e.target.name == 'aid-station-color') {
-          d3.select('#'+id).attr({
-            fill: e.target.value,
-            stroke: e.target.value + "4d"
-          });
-        }
-      }else{
-        svg.append('circle').attr({
-          id,
-          cy: y(data[0].elevation),
-          cx: x(0),
-          r: 0,
-          fill: '#000000',
-          stroke: '#0000004d',
-          'stroke-width': "2px"
-        })
-      }
-    }
+    //       d3.select('#'+id).attr({
+    //         cx: x(distance),
+    //       });
+    //       d3.select('#'+id).attr({
+    //         cy: y(data[i].elevation)
+    //       });
+    //     }else if(e.target.name == 'aid-station-size') {
+    //       const r = Math.max(parseFloat(e.target.value || '0'), 6)
+    //       d3.select('#'+id).attr({
+    //         r,
+    //         'stroke-width': r + "px"
+    //       });
+    //     }else if(e.target.name == 'aid-station-color') {
+    //       d3.select('#'+id).attr({
+    //         fill: e.target.value,
+    //         stroke: e.target.value + "4d"
+    //       });
+    //     }
+    //   }else{
+    //     svg.append('circle').attr({
+    //       id,
+    //       cy: y(data[0].elevation),
+    //       cx: x(0),
+    //       r: 0,
+    //       fill: '#000000',
+    //       stroke: '#0000004d',
+    //       'stroke-width': "2px"
+    //     })
+    //   }
+    // }
 
     //document.querySelectorAll('.aid-station-row input[type="color"]').forEach(el => el.addEventListener('input', addAidStationDot));
     //document.querySelectorAll('.aid-station-row input[type="number"]').forEach(el => el.addEventListener('keyup', addAidStationDot));
 
 
-    document.querySelector('.add-aid-station').addEventListener('click', e => {
-      const clonedRow = document.querySelector('.aid-station-row').cloneNode(true);
+    // document.querySelector('.add-aid-station').addEventListener('click', e => {
+    //   const clonedRow = document.querySelector('.aid-station-row').cloneNode(true);
 
-      const container = document.querySelector('.aid-stations-container');
+    //   const container = document.querySelector('.aid-stations-container');
 
-      const clonedId = container.childElementCount + 1
+    //   const clonedId = container.childElementCount + 1
 
-      container.append(clonedRow);
+    //   container.append(clonedRow);
 
-      clonedRow.querySelectorAll('input').forEach(el => el.dataset['asid'] = clonedId);
+    //   clonedRow.querySelectorAll('input').forEach(el => el.dataset['asid'] = clonedId);
 
-      clonedRow.querySelectorAll('input[type="color"]').forEach(el => el.addEventListener('input', addAidStationDot));
-      clonedRow.querySelectorAll('input[type="number"]').forEach(el => el.addEventListener('keyup', addAidStationDot));
-    });
+    //   clonedRow.querySelectorAll('input[type="color"]').forEach(el => el.addEventListener('input', addAidStationDot));
+    //   clonedRow.querySelectorAll('input[type="number"]').forEach(el => el.addEventListener('keyup', addAidStationDot));
+    // });
 
     //add-aid-station
 

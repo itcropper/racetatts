@@ -26,11 +26,55 @@ export const processData = (gpXml) => {
 
     const gpxData = toGeoJSON.gpx(xmlString);
 
-    const parsedData = gpxData.features[0].geometry.coordinates.map((point, i, arr) => ({ index: i, elevation: point[2], distance: (i === 0 ? 0 : distance({ pt1: { lat: arr[i][0], lon: arr[i][1] }, pt2: { lat: arr[i - 1][0], lon: arr[i - 1][1] } })) }));
+    let parsedData = gpxData.features[0].geometry.coordinates.map((point, i, arr) => (
+      { 
+        index: i, 
+        elevation: point[2], 
+        distance: 0,
+        segmentLength: (i === 0 
+          ? 0 
+          : distance({ 
+            pt1: { 
+              lat: arr[i][0], 
+              lon: arr[i][1] 
+            }, 
+            pt2: { 
+              lat: arr[i - 1][0], 
+              lon: arr[i - 1][1] 
+            } 
+          })) 
+        }));
 
-    parsedData.forEach((point, i, arr) => point.distance = i === 0 ? 0 : point.distance + arr[i - 1].distance)
+    parsedData.forEach((d,i,arr) => d.distance = d.segmentLength + (i === 0 ? 0 : arr[i-1].distance));
 
-    parsedData.forEach((point, i, arr) => point.distance = parseFloat(point.distance.toFixed(3)))
+    console.log(parsedData[parsedData.length - 1].distance);
+
+
+    // parsedData = parsedData.map((point, i, arr) => {
+    //   const distance = i === 0 ? 0 : arr[i].distance + arr[i-1].distance;
+    //   if(i % 9 === 0){
+    //     console.log("----distance");
+    //     console.log(distance);
+    //     debugger;
+    //   }
+      
+    //   return {
+    //     ...point,
+    //     distance
+    //   }
+    // });
+
+    parsedData = parsedData.map((point, i, arr) => {
+      const km = arr[i].distance;
+      const miles = km * 0.621371;
+      return {
+        ...point, 
+        distance: {
+          km: parseFloat(km.toFixed(3)),
+          miles: parseFloat(miles.toFixed(3))
+        }
+      };
+    });
 
     return parsedData;
 }

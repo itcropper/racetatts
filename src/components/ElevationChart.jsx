@@ -1,15 +1,23 @@
-import {svg, select, scaleLinear, min, max, axisBottom, axisLeft, line, curveBasis } from 'd3';
+import {select, selectAll, scaleLinear, min, max, axisBottom, axisLeft, line, curveBasis}  from 'd3';
 import React, { useEffect, useState, useRef } from 'react';
 
 export const ElevationChart = ({ elevationData, onChartLoad, aidStations, customs }) => {
 
-    let x, y, xAxis, yAxis, svg;
+    let x, y, xAxis, yAxis;
 
     const container = useRef(null);
     const [margin, setMargin] = useState({ top: 20, right: 50, bottom: 30, left: 50 });
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
     const [path, setPath] = useState(null);
+    const [lineColor, setLineColor] = useState(customs.lineColor || "#ff0000ad");
+    const [lineWidth, setLineWidth] = useState(customs.lineWidth || 3);
+    const [chartTitle, setChartTitle] = useState(customs.title || '');
+    const [showElevationLines, setShowElevationLines] = useState(customs.showElevationLines);
+    const [showDistanceLines, setShowDistanceLines] = useState(customs.showDistanceLines);
+    const [units, setUnits] = useState('km');
+
+    let svg = useRef(null);
     
 
     useEffect(() => {
@@ -79,12 +87,12 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
         if(!container){
             return;
         }
-        if (svg) {
-            svg.remove();
+        if (svg.current) {
+            svg.current.remove();
             container.current.innerHTML = '';
         }
 
-        svg = select("#elevation-chart").append("svg")
+        svg.current = select("#elevation-chart").append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
@@ -98,13 +106,14 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
         }
 
         return () => {
-            svg.remove();
+            svg.current.remove();
             container.current.innerHTML = '';
         }
 
     }, [elevationData]);
 
     useEffect(() => {
+
       select('.elevation-path')
         .transition()
         .duration(1000)
@@ -113,18 +122,71 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
 
     }, [customs]);
 
+    useEffect(() => {
+      select('.chart-title')
+      .text(chartTitle);
+    }, [chartTitle])
+
+    useEffect(() => {
+
+      if(lineColor != customs.lineColor){
+        setLineColor(customs.lineColor);
+      }
+      if(chartTitle != customs.title){
+        setChartTitle(customs.title);
+      }
+      if(lineWidth != customs.lineWidth){
+        setLineWidth(customs.lineWidth);
+      }
+      if(showElevationLines != customs.showElevationLines){
+        setShowElevationLines(customs.showElevationLines);
+      }
+      if(showDistanceLines != customs.showDistanceLines) {
+        setShowDistanceLines(customs.showDistanceLines);
+      }
+    }, [customs])
+
+    useEffect(() => {
+      if(!svg.current){
+        return;
+      }
+      svg.current.selectAll('.y-axis,.horizontalGrid-start,.horizontalGrid-lowest')
+        .transition()
+        .duration(1000)
+        .style('opacity', showElevationLines ? 1 : 0);
+
+    }, [showElevationLines])
+    
+    useEffect(() => {
+      if(!svg.current){
+        return;
+      }
+      svg.current.selectAll('.x-axis')
+        .transition()
+        .duration(1000)
+        .style('opacity', showDistanceLines ? 1 : 0);
+
+    }, [showDistanceLines])
+
     useEffect(() =>{ 
-      //console.log('--------------- customs ---------------');
-      //console.dir(customs);
       path && path.datum(elevationData)
-      .style("fill", "none")
-      .style("stroke", customs.lineColor || 'blue')
-      .style("stroke-width", `${customs.lineWidth || 5}px`)
-    }, [path]);
+      .transition()
+      .duration(1000)
+      .attr('fill', 'none')
+      .style("stroke-width", `${customs.lineWidth}px`)
+    }, [lineWidth]);
+
+    useEffect(() =>{ 
+      path && path.datum(elevationData)
+      .transition()
+      .duration(1000)
+      .attr('fill', 'none')
+      .style("stroke", customs.lineColor)
+    }, [lineColor]);
 
     function drawChart() {
 
-        x.domain([0, max(elevationData, pt => pt.distance)]);
+        x.domain([0, max(elevationData, pt => pt.distance[units === 'km' ? 'km' : 'miles'])]);
 
         const minDomain = min(elevationData, pt => pt.elevation);
         const maxDomain = max(elevationData, pt => pt.elevation)
@@ -134,58 +196,61 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
             maxDomain * 1.05
         ]);
 
-        svg.append("g")
+        svg.current.append("g")
             .attr("class", "x-axis")
             .attr("transform", "translate(0," + height + ")")
             .call(xAxis);
 
-        svg.append("g")
+        svg.current.append("g")
             .attr("class", "y-axis")
             .call(yAxis);
 
 
-        svg.append("line")
-            .attr(
-                {
-                    "class": "horizontalGrid-start",
-                    "x1": 0,
-                    "x2": x(elevationData[elevationData.length - 1].index),
-                    "y1": y(elevationData[0].elevation),
-                    "y2": y(elevationData[0].elevation),
-                    "fill": "none",
-                    "shape-rendering": "crispEdges",
-                    "stroke": "black",
-                    "stroke-width": "1px",
-                    "stroke-dasharray": ("3, 3")
-                });
+         svg.current.append("line")
+              .attr('class', "horizontalGrid-start")
+              .attr('x1', 0)
+              .attr('x2', x(elevationData[elevationData.length - 1].index))
+              .attr('y1', y(elevationData[0].elevation))
+              .attr('y2', y(elevationData[0].elevation))
+              .attr('fill', 'none')
+              .attr('stroke', 'black')
+              .attr('stroke-width', '1px')
+              .attr('stroke-dasharray', "3,3");
 
-        svg.append("line")
-            .attr(
-                {
-                    "class": "horizontalGrid-lowest",
-                    "x1": 0,
-                    "x2": x(elevationData[elevationData.length - 1].index),
-                    "y1": y(min(elevationData, pt => pt.elevation)),
-                    "y2": y(min(elevationData, pt => pt.elevation)),
-                    "fill": "none",
-                    "shape-rendering": "crispEdges",
-                    "stroke": "black",
-                    "stroke-width": "2px",
-                    "stroke-dasharray": ("2, 10")
-                });
+        svg.current.append("line")
+            .attr('class', "horizontalGrid-lowest")
+            .attr('x1', 0)
+            .attr('x2', x(elevationData[elevationData.length - 1].index))
+            .attr('y1', y(min(elevationData, pt => pt.elevation)))
+            .attr('y2', y(min(elevationData, pt => pt.elevation)))
+            .attr('fill', 'none')
+            .attr('stroke', 'black')
+            .attr('stroke-width', '2px')
+            .attr('stroke-dasharray', "2, 10");
+
+        svg.current.append("text")
+          .attr('class', 'chart-title')
+          .attr("x", (width / 2))             
+          //.attr("y", 0 - (margin.top / 2))
+          .attr("text-anchor", "middle")  
+          .style("font-size", "24px") 
+          .text(chartTitle);
 
 
 
         const plotLine = line()
             .curve(curveBasis)
-            .x(d => x(d.distance))
+            .x(d => x(d.distance[units === 'km' ? 'km' : 'standard']))
             .y(d => y(d.elevation));
 
         
         if(!path) {
-          setPath(svg.append("g").append("path")
+          setPath(svg.current.append("g").append("path")
               .datum(elevationData)
               .attr("d", plotLine)
+              .attr('stroke', 'black')
+              .attr('stroke-width', '3px')
+              .attr('fill', 'none')
               .attr('class', 'elevation-path'));
         }
         onChartLoad(true)

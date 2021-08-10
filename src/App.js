@@ -15,8 +15,8 @@ function App() {
     title: '',
     lineColor: '#ff0000ad',
     lineWidth: 3,
-    showElevationAxis: true,
-    showDistanceAxis: true,
+    showElevationLines: true,
+    showDistanceLines: true,
     fontSize: 14,
     unit: 'standard',
     aidStations: [{distance: 0, size: 1, color: "#000000ad"}]
@@ -24,10 +24,11 @@ function App() {
   
   const [chartIsLoaded, setChartIsLoaded] = useState(false);
 
-  // useEffect(() => {
-  //   if(data){
-  //   }
-  // }, [data])
+  useEffect(() => {
+    if(data){
+      // console.log(data);
+    }
+  }, [data])
 
   // useEffect(() => {
 
