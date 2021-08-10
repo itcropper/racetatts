@@ -67,7 +67,7 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
       }
       if(stationLine.empty()){
         stationLine = svg.current.append('line')
-          .attr('class', "y-axis")
+          .attr('class', "x-axis")
           .attr('id', id + '--line');
       }
 
