@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/racetatts/static/css/main.d4f7d367.chunk.css",
-    "main.js": "/racetatts/static/js/main.2fd30c5a.chunk.js",
-    "main.js.map": "/racetatts/static/js/main.2fd30c5a.chunk.js.map",
+    "main.js": "/racetatts/static/js/main.3ba14bed.chunk.js",
+    "main.js.map": "/racetatts/static/js/main.3ba14bed.chunk.js.map",
     "runtime-main.js": "/racetatts/static/js/runtime-main.077566c6.js",
     "runtime-main.js.map": "/racetatts/static/js/runtime-main.077566c6.js.map",
     "static/js/2.deed34e0.chunk.js": "/racetatts/static/js/2.deed34e0.chunk.js",
@@ -17,6 +17,6 @@
     "static/js/runtime-main.077566c6.js",
     "static/js/2.deed34e0.chunk.js",
     "static/css/main.d4f7d367.chunk.css",
-    "static/js/main.2fd30c5a.chunk.js"
+    "static/js/main.3ba14bed.chunk.js"
   ]
 }
