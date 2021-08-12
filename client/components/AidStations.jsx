@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import { CirclePicker } from 'react-color';
 
 const AidStationRow = ({distance = 0, size = 0, color = "#000000", id, onUpdate}) => {
@@ -6,6 +6,14 @@ const AidStationRow = ({distance = 0, size = 0, color = "#000000", id, onUpdate}
     const [dist, setDist] = useState(distance);
     const [s, setS] = useState(size);
     const [c, setC] = useState(color);
+
+    const distRef = useRef(null);
+    const sizeRef = useRef(null);
+
+    useEffect(() => {
+        distRef.current.value = dist;
+        sizeRef.current.value = s;
+    }, []);
 
 
     useEffect(() => {
@@ -19,15 +27,19 @@ const AidStationRow = ({distance = 0, size = 0, color = "#000000", id, onUpdate}
             <div className="flex flex-col">
                 <div className="flex flex-row">
                     <input
+                        ref={distRef}
                         className="py-2 pl-4 w-6/12 mr-2 focus:border-light-blue-500 focus:ring-1 focus:ring-light-blue-500 focus:outline-none w-full text-sm text-black placeholder-gray-500 border border-gray-200 rounded-md"
                         type="number"
                         placeholder="Distance" 
                         name="aid-station-distance" 
+                        value={dist}
                         onChange={(e) => setDist(e.currentTarget.value)}/>
                     <input
+                        ref={sizeRef}
                         className="py-2 pl-4 w-2/12 mr-2 focus:border-light-blue-500 focus:ring-1 focus:ring-light-blue-500 focus:outline-none w-full text-sm text-black placeholder-gray-500 border border-gray-200 rounded-md"
                         type="number" 
                         placeholder="Size" 
+                        value={s}
                         name="aid-station-size" 
                         onChange={(e) => setS(e.currentTarget.value)} />
                 </div>

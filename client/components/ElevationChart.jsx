@@ -18,6 +18,7 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
   const [chartTitle, setChartTitle] = useState(customs.title || '');
   const [showElevationLines, setShowElevationLines] = useState(customs.showElevationLines);
   const [showDistanceLines, setShowDistanceLines] = useState(customs.showDistanceLines);
+  const [fontSize, setFontSize] = useState(customs.fontSize);
   const [units, setUnits] = useState('km');
   const y = useRef(null);
   const x = useRef(null);
@@ -103,9 +104,11 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
 
   }, [aidStations, elevationData])
 
+  
+
   useEffect(() => {
     onChartLoad(elevationData !== null && elevationData.length !== 0);
-    if (!container || !x.current || !y.current) {
+    if (!container.current || !x.current || !y.current) {
       return;
     }
     if (svg.current) {
@@ -114,6 +117,7 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
     }
 
     svg.current = select("#elevation-chart").append("svg")
+      .attr('style', "background:white")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -128,8 +132,12 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
     }
 
     return () => {
-      svg.current.remove();
-      container.current.innerHTML = '';
+      if(svg.current){
+        svg.current.remove();
+      }
+      if(container.current){
+        container.current.innerHTML = '';
+      }
     }
 
   }, [elevationData]);
@@ -144,10 +152,11 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
 
   }, [customs]);
 
+  useEffect(() => select('.chart-title').text(chartTitle), [chartTitle]);
   useEffect(() => {
-    select('.chart-title')
-      .text(chartTitle);
-  }, [chartTitle])
+    select('.x-axis').style('font-size', fontSize + "px");
+    select('.y-axis').style('font-size', fontSize + "px");
+  }, [fontSize]);
 
   useEffect(() => {
 
@@ -165,6 +174,10 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
     }
     if (showDistanceLines != customs.showDistanceLines) {
       setShowDistanceLines(customs.showDistanceLines);
+    }
+
+    if (fontSize != customs.fontSize) {
+      setFontSize(customs.fontSize);
     }
   }, [customs])
 
@@ -269,7 +282,7 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
       setPath(svg.current.append("g").append("path")
         .datum(elevationData)
         .attr("d", plotLine)
-        .attr('stroke', 'black')
+        .attr('stroke', (lineColor || "#ff2022"))
         .attr('stroke-width', '3px')
         .attr('fill', 'none')
         .attr('class', 'elevation-path'));
