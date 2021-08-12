@@ -11,8 +11,10 @@
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "server": "node-env-run server --exec nodemon | pino-colada",
-    "dev": "run-p server start"
+    "start:ci": "run-p server build",
+    "server": "node-env-run server",
+    "dev:server": "node-env-run server --exec nodemon | pino-colada",
+    "dev": "run-p dev:server start"
   },
   "dependencies": {
     "@mapbox/togeojson": "^0.16.0",
