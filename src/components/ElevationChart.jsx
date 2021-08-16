@@ -38,7 +38,7 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
   }, [width, height])
 
   useEffect(() => setHeight(parseInt('' + (width * 0.3)) - margin.top - margin.bottom), [width]);
-  useEffect(() => setWidth(container.current.offsetWidth - margin.left - margin.right), []);
+  useEffect(() => setWidth(0.95 * (container.current.offsetWidth - margin.left - margin.right)), []);
 
   useEffect(() => {
     if (!aidStations || !elevationData) {
@@ -117,7 +117,6 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
     }
 
     svg.current = select("#elevation-chart").append("svg")
-      .attr('style', "background:white")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -292,6 +291,6 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
 
 
   return (
-    <div id="elevation-chart" ref={container}></div>
+    <div id="elevation-chart" class="flex justify-center items-center w-full h-full" ref={container}></div>
   )
 };
