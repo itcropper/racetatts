@@ -7,13 +7,13 @@
   "scripts": {
     "start": "react-scripts start",
     "build-client": "react-scripts build",
-    "build": "run-p build-client server",
+    "build": "run-p build-client",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "start:ci": "run-p server build",
-    "server": "node-env-run server ",
+    "server": "node-env-run server",
     "dev:server": "node-env-run server --exec nodemon | pino-colada",
     "dev": "run-p dev:server start"
   },
