@@ -31,7 +31,6 @@ export const CustomizePanel = ({ onUpload, customs, setCustoms, updateAidStation
         setCustoms(state);
     }, [state])
 
-
     // function processData(gpXml) {
 
     //     const xmlString = (new DOMParser()).parseFromString(gpXml, "text/xml")
@@ -54,15 +53,16 @@ export const CustomizePanel = ({ onUpload, customs, setCustoms, updateAidStation
 
         const reader = new FileReader();
         reader.addEventListener('load', (event) => {
-            onUpload(processData(event.target.result));
+            const profileData = processData(event.target.result);
+            onUpload(profileData);
+            setData(profileData);
         });
         reader.readAsText(files);
 
     }
 
     return (
-        <div className="w-11/12 px-2 shadow-xl h-full">
-            <h2 className="text-3xl">Customize</h2>
+        <div className="w-11/12 px-2 shadow-xl">
 
             <div className="customize-field my-4">
                 <p className="text-xl  mb-2">Upload File</p>
@@ -71,7 +71,7 @@ export const CustomizePanel = ({ onUpload, customs, setCustoms, updateAidStation
                     className="focus:border-light-blue-500 focus:ring-1 focus:ring-light-blue-500 focus:outline-none w-full text-sm text-black placeholder-gray-500 border border-gray-200 rounded-md py-2 pl-4"
                     type="file" placeholder="race.gpx" accept=".gpx, .kml" />
             </div>
-
+            <div className={`overflow-y-hidden transition-height duration-500 ease-in-out ${data != null && data.length ? "h-auto" : "h-0"}`}>
             <div className="customize-field my-4">
                 <p className="text-xl  mb-2">Title</p>
                 <input name="chart-title"
@@ -150,11 +150,11 @@ export const CustomizePanel = ({ onUpload, customs, setCustoms, updateAidStation
                 <p className="text-xl mb-2">Units</p>
                 <div className="flex justify-around flex-col pl-8">
                     <div className="flex flex-row items-baseline">
-                        <input id="unit-standard" className="" type="radio" name="unit" value="standard" checked onChange={() => { }} />
+                        <input id="unit-standard" className="" type="radio" name="units" value="standard" checked={customs.units == 'miles'} onChange={e => e.currentTarget.checked &&  setState({ ...state, units: 'miles' })} />
                         <label htmlFor="unit-standard" className="pl-2 mb-1 text-lg">Standard</label>
                     </div>
                     <div className="flex flex-row items-baseline">
-                        <input id="unit-metric" className="" type="radio" name="unit" value="metric" checked onChange={() => { }} />
+                        <input id="unit-metric" className="" type="radio" name="units" value="metric" checked={customs.units == 'km'} onChange={e => e.currentTarget.checked &&  setState({ ...state, units: 'km' })} />
                         <label htmlFor="unit-metric" className="pl-2 mb-1 text-lg">Metric</label>
                     </div>
                 </div>
@@ -162,6 +162,7 @@ export const CustomizePanel = ({ onUpload, customs, setCustoms, updateAidStation
 
             <div className="customize-field my-4">
                 <AidStations updateStations={updateAidStations} />
+            </div>
             </div>
         </div>
     )

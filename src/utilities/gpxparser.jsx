@@ -29,7 +29,10 @@ export const processData = (gpXml) => {
     let parsedData = gpxData.features[0].geometry.coordinates.map((point, i, arr) => (
       { 
         index: i, 
-        elevation: point[2], 
+        elevation: {
+          m: 0.3048 * point[2],
+          ft: point[2]
+        }, 
         distance: 0,
         segmentLength: (i === 0 
           ? 0 

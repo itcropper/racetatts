@@ -1,6 +1,7 @@
 import { select, scaleLinear, min, max, axisBottom, axisLeft, line, curveBasis } from 'd3';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import "./ElevationChart.css"
+import {useWindowSize} from '../utilities/window-size';
 
 const _transition_ = 800;
 
@@ -19,11 +20,18 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
   const [showElevationLines, setShowElevationLines] = useState(customs.showElevationLines);
   const [showDistanceLines, setShowDistanceLines] = useState(customs.showDistanceLines);
   const [fontSize, setFontSize] = useState(customs.fontSize);
-  const [units, setUnits] = useState('km');
+  const [units, setUnits] = useState(customs.units || 'km');
   const y = useRef(null);
   const x = useRef(null);
 
   let svg = useRef(null);
+
+  const size = useWindowSize();
+
+  useEffect(() => {
+    // console.log('size -->')
+    // console.log(size)
+  }, [size])
 
 
   useEffect(() => {
@@ -38,7 +46,7 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
   }, [width, height])
 
   useEffect(() => setHeight(parseInt('' + (width * 0.3)) - margin.top - margin.bottom), [width]);
-  useEffect(() => setWidth(0.95 * (container.current.offsetWidth - margin.left - margin.right)), []);
+  useEffect(() => setWidth(0.95 * (container.current.offsetWidth - margin.left - margin.right)), [size]);
 
   useEffect(() => {
     if (!aidStations || !elevationData) {
@@ -76,12 +84,12 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
       let i = 0;
       let xPos = 0;
       while (xPos <= distance && i < elevationData.length) {
-        xPos = elevationData[i].distance[units];
+        xPos = elevationData[i].distance[units === 'km' ? 'km' : 'miles'];
         i++;
       }
 
       const r = Math.max(parseFloat(station.size || '0'), 3)
-      const cy = y.current(elevationData[i].elevation);
+      const cy = y.current(elevationData[i].elevation[units === 'km' ? 'm' : 'ft']);
       const cx = x.current(distance);
 
       stationDot.attr('cx', cx)
@@ -89,7 +97,7 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
         .attr('r', r + "px")
         .attr('stroke-width', r + "px")
         .attr('fill', station.color || "#ff0000")
-        .attr('stroke', (station.color || "#ff0000") + "22");
+        .attr('stroke', (station.color || "#ff0000") + "3a");
 
       stationLine
         .attr('x1', cx)
@@ -142,6 +150,32 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
   }, [elevationData]);
 
   useEffect(() => {
+    if(!elevationData || elevationData.length === 0){
+      return;
+    }
+    xAxis = axisBottom().scale(x.current).ticks(10);
+    yAxis = axisLeft().scale(y.current).ticks(5);
+
+    x.current.domain([0, max(elevationData, pt => pt.distance[units === 'km' ? 'km' : 'miles'])]);
+
+    const minDomain = min(elevationData, pt => pt.elevation[units === 'km' ? 'm' : 'ft']);
+    const maxDomain = max(elevationData, pt => pt.elevation[units === 'km' ? 'm' : 'ft'])
+
+    y.current.domain([
+      minDomain - minDomain * 0.05,
+      maxDomain * 1.05
+    ]);
+
+    svg.current.select("g.x-axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
+
+  svg.current.select("g.y-axis")
+    .call(yAxis);
+
+  }, [units])
+
+  useEffect(() => {
 
     select('.elevation-path')
       .transition()
@@ -153,8 +187,12 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
 
   useEffect(() => select('.chart-title').text(chartTitle), [chartTitle]);
   useEffect(() => {
-    select('.x-axis').style('font-size', fontSize + "px");
-    select('.y-axis').style('font-size', fontSize + "px");
+    if(svg.current){
+    svg.current.selectAll('.x-axis,.y-axis').style('font-size', fontSize + "px")// "font-family": "Helvetica"});
+
+    svg.current.selectAll('.y-axis .tick text').attr('transform', 'translate(-3, -8), rotate(-45)');
+    }
+
   }, [fontSize]);
 
   useEffect(() => {
@@ -174,9 +212,11 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
     if (showDistanceLines != customs.showDistanceLines) {
       setShowDistanceLines(customs.showDistanceLines);
     }
-
     if (fontSize != customs.fontSize) {
       setFontSize(customs.fontSize);
+    }
+    if(units != customs.units){
+      setUnits(customs.units);
     }
   }, [customs])
 
@@ -221,8 +261,8 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
   function drawChart() {
     x.current.domain([0, max(elevationData, pt => pt.distance[units === 'km' ? 'km' : 'miles'])]);
 
-    const minDomain = min(elevationData, pt => pt.elevation);
-    const maxDomain = max(elevationData, pt => pt.elevation)
+    const minDomain = min(elevationData, pt => pt.elevation[units === 'km' ? 'm' : 'ft']);
+    const maxDomain = max(elevationData, pt => pt.elevation[units === 'km' ? 'm' : 'ft'])
 
     y.current.domain([
       minDomain - minDomain * 0.05,
@@ -242,9 +282,9 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
     svg.current.append("line")
       .attr('class', "horizontalGrid-start")
       .attr('x1', 0)
-      .attr('x2', x.current(elevationData[elevationData.length - 1].index))
-      .attr('y1', y.current(elevationData[0].elevation))
-      .attr('y2', y.current(elevationData[0].elevation))
+      .attr('x2', x.current(elevationData[elevationData.length - 1].distance[units === 'km' ? 'km' : 'miles']))
+      .attr('y1', y.current(elevationData[0].elevation[units === 'km' ? 'm' : 'ft']))
+      .attr('y2', y.current(elevationData[0].elevation[units === 'km' ? 'm' : 'ft']))
       .attr('fill', 'none')
       .attr('stroke', 'black')
       .attr('stroke-width', '1px')
@@ -253,9 +293,9 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
     svg.current.append("line")
       .attr('class', "horizontalGrid-lowest")
       .attr('x1', 0)
-      .attr('x2', x.current(elevationData[elevationData.length - 1].index))
-      .attr('y1', y.current(min(elevationData, pt => pt.elevation)))
-      .attr('y2', y.current(min(elevationData, pt => pt.elevation)))
+      .attr('x2', x.current(elevationData[elevationData.length - 1].distance[units === 'km' ? 'km' : 'miles']))
+      .attr('y1', y.current(min(elevationData, pt => pt.elevation[units === 'km' ? 'm' : 'ft'])))
+      .attr('y2', y.current(min(elevationData, pt => pt.elevation[units === 'km' ? 'm' : 'ft'])))
       .attr('fill', 'none')
       .attr('stroke', 'black')
       .attr('stroke-width', '2px')
@@ -267,14 +307,15 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
       //.attr("y", 0 - (margin.top / 2))
       .attr("text-anchor", "middle")
       .style("font-size", "24px")
+      .style("font-family", "Helvetica")
       .text(chartTitle);
 
 
 
     const plotLine = line()
       .curve(curveBasis)
-      .x(d => x.current(d.distance[units === 'km' ? 'km' : 'standard']))
-      .y(d => y.current(d.elevation));
+      .x(d => x.current(d.distance[units === 'km' ? 'km' : 'miles']))
+      .y(d => y.current(d.elevation[units === 'km' ? 'm' : 'ft']));
 
 
     if (!path) {
@@ -291,6 +332,6 @@ export const ElevationChart = ({ elevationData, onChartLoad, aidStations, custom
 
 
   return (
-    <div id="elevation-chart" class="flex justify-center items-center w-full h-full" ref={container}></div>
+    <div id="elevation-chart" className="flex justify-center items-center w-full h-full" ref={container}></div>
   )
 };

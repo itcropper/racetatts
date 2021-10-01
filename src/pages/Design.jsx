@@ -23,7 +23,7 @@ export const Design = ({ onSave }) => {
     showElevationLines: true,
     showDistanceLines: true,
     fontSize: 14,
-    unit: 'standard',
+    units: 'miles',
     aidStations: [{ distance: 0, size: 1, color: "#000000ad" }]
   });
 
@@ -46,7 +46,7 @@ export const Design = ({ onSave }) => {
 
     if (result.image && result.response === "SUCCESS") {
       onSave(result.image);
-      history.push("/confirm");
+      history.push(`/confirm?imageId=${result.image}`);
     }
   }
 
@@ -60,8 +60,8 @@ export const Design = ({ onSave }) => {
         </div>
         <main className="w-9/12">
 
-          <div class="px-4 py-8 pl-0">
-            <div class="border-4 border-dashed border-gray-200 rounded-lg h-96 flex items-center"  ref={chart}>
+          <div className="px-4 py-8 pl-0">
+            <div className="border-4 border-dashed border-gray-200 rounded-lg h-96 flex items-center"  ref={chart}>
               <ElevationChart
                 elevationData={data}
                 onChartLoad={setChartIsLoaded}
